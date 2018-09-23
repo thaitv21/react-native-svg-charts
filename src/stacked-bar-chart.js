@@ -168,7 +168,7 @@ class BarChart extends PureComponent {
         const x = this.calcXScale(xDomain)
         const y = this.calcYScale(yDomain)
 
-        const areas = this.calcAreas(x, y, series)
+        let areas = this.calcAreas(x, y, series)
 
         const extraProps = {
             x,
