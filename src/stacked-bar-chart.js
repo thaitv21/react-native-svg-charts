@@ -4,7 +4,7 @@ import * as shape from 'd3-shape'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
-import Svg from 'react-native-svg'
+import Svg, { Defs, LinearGradient, Stop } from 'react-native-svg'
 import Path from './animated-path'
 
 class BarChart extends PureComponent {
@@ -145,7 +145,7 @@ class BarChart extends PureComponent {
         const { height, width } = this.state
 
         if (data.length === 0) {
-            return <View style={ style } />
+            return <View style={ style }/>
         }
 
         const series = shape
@@ -185,6 +185,19 @@ class BarChart extends PureComponent {
                     {
                         height > 0 && width > 0 &&
                         <Svg style={{ height, width }}>
+                            <Defs>
+                                {
+                                    areas.map((bar, index) => {
+                                        return (
+                                            <LinearGradient id={ bar.color } x1="0" y1="0" x2="100%" y2="0" key={ index }>
+                                                <Stop offset="0" stopColor={ bar.color } stopOpacity="1"/>
+                                                <Stop offset="0.2" stopColor={ bar.color } stopOpacity="0.75"/>
+                                                <Stop offset="1" stopColor={ bar.color } stopOpacity="1"/>
+                                            </LinearGradient>
+                                        )
+                                    })
+                                }
+                            </Defs>
                             {
                                 React.Children.map(children, child => {
                                     if (child && child.props.belowChart) {
@@ -197,13 +210,14 @@ class BarChart extends PureComponent {
                                 areas.map((bar, index) => {
                                     const keyIndex = index % data.length
                                     const key = `${keyIndex}-${bar.key}`
-                                    const { svg } = data[ keyIndex ][ bar.key ]
+                                    const { svg } = data[keyIndex][bar.key]
 
                                     return (
                                         <Path
                                             key={ key }
-                                            fill={ bar.color }
                                             { ...svg }
+                                            stroke={ '#aaaaaa' }
+                                            fill={ 'url(#' + bar.color + ')' }
                                             d={ bar.path }
                                             animate={ animate }
                                             animationDuration={ animationDuration }
